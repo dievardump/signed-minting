@@ -10,10 +10,10 @@ The mock contract `contracts/mocks/MyToken.sol` contains various minting functio
 - Account minting one token for another account (paying the gas), using an "allowance signature"
 - Account minting several tokens using an "allowance signature"
 - Account minting several tokens for another account (paying the gas), using an "allowance signature"
-- Account minting one token, with Tier verification (early bird, whitelist, etc...), using an "allowance signature"
-- Account minting one token for another account (paying the gas), with Tier verification (early bird, whitelist, etc...), using an "allowance signature"
-- Account minting several tokens, with Tier verification (early bird, whitelist, etc...), using an "allowance signature"
-- Account minting several tokens for another account (paying the gas), with Tier verification (early bird, whitelist, etc...), using an "allowance signature"
+- Account minting one token, with Tier verification (early bird, allow list, etc...), using an "allowance signature"
+- Account minting one token for another account (paying the gas), with Tier verification (early bird, allow list, etc...), using an "allowance signature"
+- Account minting several tokens, with Tier verification (early bird, allow list, etc...), using an "allowance signature"
+- Account minting several tokens for another account (paying the gas), with Tier verification (early bird, allow list, etc...), using an "allowance signature"
 
 ## Example
 
