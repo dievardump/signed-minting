@@ -20,3 +20,8 @@ The mock contract `contracts/mocks/MyToken.sol` contains various minting functio
 The tests contain all needed function to understand how to sign a message off-chain in order to allow people to mint, with authorization check.
 
 
+# Extensible
+
+The encoding of the Tier in the nonce is just an example. But it could also be possible to encode things into 64 bits instead of 128, and add a "token price" in the nonce, on top of the tier and the actual nonce.
+
+Lots of things possible here.
