@@ -16,7 +16,7 @@ contract SignedAllowance {
 
     /// @notice Helper to know allowancesSigner address
     /// @return the allowance signer address
-    function allowancesSigner() public view returns (address) {
+    function allowancesSigner() public view virtual returns (address) {
         return _allowancesSigner;
     }
 
@@ -67,7 +67,7 @@ contract SignedAllowance {
 
         // verifies that the sha3(account, nonce, address(this)) has been signed by _allowancesSigner
         require(
-            message.recover(signature) == _allowancesSigner,
+            message.recover(signature) == allowanceSigner(),
             '!INVALID_SIGNATURE!'
         );
         require(usedAllowances[message] == false, '!ALREADY_USED!');
