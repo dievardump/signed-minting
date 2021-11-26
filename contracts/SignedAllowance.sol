@@ -67,7 +67,7 @@ contract SignedAllowance {
 
         // verifies that the sha3(account, nonce, address(this)) has been signed by _allowancesSigner
         require(
-            message.recover(signature) == allowanceSigner(),
+            message.recover(signature) == allowancesSigner(),
             '!INVALID_SIGNATURE!'
         );
         require(usedAllowances[message] == false, '!ALREADY_USED!');
