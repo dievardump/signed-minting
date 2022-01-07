@@ -6,3 +6,7 @@ artifacts
 
 .env*
 !.env.SAMPLE
+
+
+dist/*
+!dist/package.json

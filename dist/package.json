@@ -1,0 +1,40 @@
+{
+	"name": "@dievardump-web3/signed-allowances",
+	"description": "Package to import and use the contracts of NiftyForge.io",
+	"version": "0.0.0",
+	"files": [
+		"build/**/*",
+		"contracts/**/*",
+		"deploy/**/*",
+		"deployments/**/*",
+		"!contracts/mocks/**/*"
+	],
+	"scripts": {
+		"prepare": "bash ../scripts/package/prepare.sh",
+		"test": "echo \"No test specified\""
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/dievardump/signed-minting.git"
+	},
+	"keywords": [
+		"solidity",
+		"ethereum",
+		"smart",
+		"contracts",
+		"security",
+		"niftyforge"
+	],
+	"author": "dievardump (Simon Fremaux) <dievardump@gmail.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/dievardump/signed-minting/issues"
+	},
+	"homepage": "https://github.com/dievardump/signed-minting/",
+	"publishConfig": {
+		"access": "public"
+	},
+	"devDependencies": {
+		"@openzeppelin/contracts": "^4.3.2"
+	}
+}

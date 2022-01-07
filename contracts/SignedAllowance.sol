@@ -62,14 +62,30 @@ contract SignedAllowance {
         uint256 nonce,
         bytes memory signature
     ) public view returns (bytes32) {
+        return
+            _validateSignature(account, nonce, signature, allowancesSigner());
+    }
+
+    /// @dev It ensures that signer signed a message containing (account, nonce, address(this))
+    ///      and that this message was not already used
+    /// @param account the account the allowance is associated to
+    /// @param nonce the nonce associated to this allowance
+    /// @param signature the signature by the allowance signer wallet
+    /// @param signer the signer
+    /// @return the message to mark as used
+    function _validateSignature(
+        address account,
+        uint256 nonce,
+        bytes memory signature,
+        address signer
+    ) internal view returns (bytes32) {
         bytes32 message = createMessage(account, nonce)
             .toEthSignedMessageHash();
 
-        // verifies that the sha3(account, nonce, address(this)) has been signed by _allowancesSigner
-        require(
-            message.recover(signature) == allowancesSigner(),
-            '!INVALID_SIGNATURE!'
-        );
+        // verifies that the sha3(account, nonce, address(this)) has been signed by signer
+        require(message.recover(signature) == signer, '!INVALID_SIGNATURE!');
+
+        // verifies that the allowances was not already used
         require(usedAllowances[message] == false, '!ALREADY_USED!');
 
         return message;
