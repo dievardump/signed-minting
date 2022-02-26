@@ -1,7 +1,7 @@
 {
-	"name": "@dievardump-web3/signed-allowances",
+	"name": "@0xdievardump/signed-allowances",
 	"description": "Package to import and use the contracts of NiftyForge.io",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"files": [
 		"build/**/*",
 		"contracts/**/*",
