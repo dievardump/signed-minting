@@ -36,14 +36,6 @@ module.exports = {
         ],
     },
     networks: {},
-    namedAccounts: {
-        deployer: {
-            default: 0, // here this will by default take the first account as deployer
-        },
-        signer: {
-            default: 1, // here this will by default take the second account as signer
-        },
-    },
     gasReporter: {
         enabled: process.env.REPORT_GAS ? true : false,
         gasPrice: 21,
