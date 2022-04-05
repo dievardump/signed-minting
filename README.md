@@ -107,7 +107,7 @@ import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@0xdievardump/contracts/SignedAllowance.sol';
 
 // contract allowing users to mint using a signature
-// in this contract users have to mint there full allowance in the same call
+// in this contract users can mint there full allowance in sevral calls
 
 contract MyToken is Ownable, ERC721, SignedAllowance {
     uint256 public lastTokenId;
