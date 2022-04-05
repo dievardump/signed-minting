@@ -25,6 +25,14 @@ The encoding of the Tier in the nonce is just an example. But it is also possibl
 
 Lots of things possible here.
 
+# Signing a list
+
+You can use the script in `scripts/sign-allowances.js` to sign allowances.
+
+Just set the env variable `CONTRACT_ADDRESS` and replace the content of `perAddress` with your own list of addresses & their allocation / nonce
+
+You can then do a `npx hardhat run scripts/sign-allowances.js`
+
 # Usage
 
 See `contracts/mocks/` to see an extensive usage with tiers, batch mints etc...
