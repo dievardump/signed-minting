@@ -1,31 +1,78 @@
 # SignedAllowance
 
-This repository contains a minimal contract and an example of how to use "off-chain signing" to manage things like tier-minting, early birds, etc... in NFT sale processes, without needing to save lists on-chain.
+This repository contains a minimal contract and an example of how to use "off-chain signing" to manage things like allowlists, tier-minting, early birds, etc... in NFT sale processes, without needing to save the actual lists on-chain.
 
-## mint, mintFor, mintBatch, mintBatchFor, mintTier, mintTierFor, mintBatchTier, mintBatchTierFor
+Easier to manage and create than Merkle Trees, off-chain signed allowances are gas efficient ways to create allowlists.
 
-The mock contract `contracts/mocks/MyToken.sol` contains various minting function allowing:
+The principle is simple and is based on the fact that each ethereum address can sign messages and that the resulting unique signature can then be verified easily in solidity.
 
--   Account minting one token using an "allowance signature"
--   Account minting one token for another account (paying the gas), using an "allowance signature"
--   Account minting several tokens using an "allowance signature"
--   Account minting several tokens for another account (paying the gas), using an "allowance signature"
--   Account minting one token, with Tier verification (early bird, allow list, etc...), using an "allowance signature"
--   Account minting one token for another account (paying the gas), with Tier verification (early bird, allow list, etc...), using an "allowance signature"
--   Account minting several tokens, with Tier verification (early bird, allow list, etc...), using an "allowance signature"
--   Account minting several tokens for another account (paying the gas), with Tier verification (early bird, allow list, etc...), using an "allowance signature"
+This way, it is possible to sign as many messages(/allowances) as we want off-chain with an "allowanceSigner" wallet specifically created for this purpose and just verify on-chain that this message has actually been signed by it.
 
-## Example
+This way you only need to save on-chain the "allowanceSigner" public address instead of the full list of allowances.
 
-The tests contain all needed function to understand how to sign a message off-chain in order to allow people to mint, with authorization check.
+This also allows to update the list of allowances anytime, since it's now off-chain and is only verified on-chain.
 
-# Extensible
+## Installation
 
-The encoding of the Tier in the nonce is just an example. But it is also possible to encode things into 64 bits instead of 128, and add a "token price" in the nonce, on top of the tier and the actual nonce.
+`npm install --save-dev @0xdievardump/signed-allowances`
 
-Lots of things possible here.
+or
 
-# Signing a list
+`pnpm add -D @0xdievardump/signed-allowances`
+
+## Features
+
+The `contracts/SignedAllowances.sol` contract contains a few functions that you can use to verify and / or use an allowance.
+
+### validateSignature(address account, uint256 nonce, bytes memeory signature) public
+
+Allows to:
+
+1. validate `signature` has been created by `allowancesSigner` with the given parameters
+2. verify that this signature has not already been marked as used
+
+### \_useAllowance(address account, uint256 nonce, bytes calldata signature) internal
+
+Allows to verify & mark an allowance as used.
+Once used, calling this function again with the same parameters will revert
+
+### \_setAllowancesSigner(address newSigner) internal
+
+Allows to set the allowance signer. Usually used in the constructor of your contract and / or in a public setter with the `onlyOwner` modifier
+
+## Usage
+
+Install the package
+
+`npm install --save-dev @0xdievardump/signed-allowances`
+
+Extend SignedAllowance
+
+```solidity
+
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.9;
+
+import {SignedAllowance} from '@0xdievardump/contracts/SignedAllowance.sol';
+
+
+contract MyMinter is SignedAllowance {
+    constructor(address newAllowanceSigner) {
+        _setAllowanceSigner(newAllowanceSigner);
+    }
+
+    function mint(uint256 nonce, bytes32 memory signature)  public {
+        // use the allowance
+        _useAllowance(msg.sender, nonce, signature);
+        // do your mint here...
+        nftContract.mintTo(msg.sender);
+    }
+}
+```
+
+See `contracts/mocks/` and [the Example section](#examples) to see an extensive usage with allowlist, tiers, batch mints etc...
+
+### Creating a list
 
 You can use the script in `scripts/sign-allowances.js` to sign allowances.
 
@@ -33,11 +80,37 @@ Just set the env variable `CONTRACT_ADDRESS` and replace the content of `perAddr
 
 You can then do a `npx hardhat run scripts/sign-allowances.js`
 
-# Usage
+### Front-end usage
 
-See `contracts/mocks/` to see an extensive usage with tiers, batch mints etc...
+After you created a list, you can simply add it as a JSON file to your front-end.
+When a user connects, you can verify it exists in the list, and pass its parameters when minting.
 
-`npm add --save-dev @0xdievardump/signed-allowances`
+```html
+<script>
+    import allowlist from 'generated-allowlist.json';
+    import { getMinter } from '$lib/modules/contracts';
+
+    export let account;
+
+    function checkAllowlist(account) {
+        return;
+    }
+
+    async function onMint() {
+        await getMinter()
+            .mint(allowlist[account].nonce, allowlist[account].signature)
+            .then((tx) => tx.wait());
+    }
+</script>
+
+{#if allowlist[account]}
+<button on:click="{onMint}">Mint</button>
+{:else}
+<p>You are not in the allowlist.</p>
+{/if}
+```
+
+### In contracts
 
 contract allowing users to mint using a signature
 
@@ -166,3 +239,26 @@ contract MyToken is Ownable, ERC721, SignedAllowance {
     }
 }
 ```
+
+## Examples
+
+### mint, mintFor, mintBatch, mintBatchFor, mintTier, mintTierFor, mintBatchTier, mintBatchTierFor
+
+The mock contract `contracts/mocks/MyToken.sol` contains various minting function allowing:
+
+-   Account minting one token using an "allowance signature"
+-   Account minting one token for another account (paying the gas), using an "allowance signature"
+-   Account minting several tokens using an "allowance signature"
+-   Account minting several tokens for another account (paying the gas), using an "allowance signature"
+-   Account minting one token, with Tier verification (early bird, allow list, etc...), using an "allowance signature"
+-   Account minting one token for another account (paying the gas), with Tier verification (early bird, allow list, etc...), using an "allowance signature"
+-   Account minting several tokens, with Tier verification (early bird, allow list, etc...), using an "allowance signature"
+-   Account minting several tokens for another account (paying the gas), with Tier verification (early bird, allow list, etc...), using an "allowance signature"
+
+The tests contain all needed function to understand how to sign a message off-chain in order to allow people to mint, with authorization check.
+
+### Extensible
+
+The encoding of the Tier in the nonce is just an example. But it is also possible to encode things into 64 bits instead of 128, and add a "token price" in the nonce, on top of the tier and the actual nonce.
+
+Lots of things possible here.
